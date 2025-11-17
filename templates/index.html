@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Sentimen Spotify</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-white font-sans antialiased relative overflow-x-hidden">
+
+    <!-- Background gradient & blur orbs -->
+    <div class="absolute inset-0 -z-10">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] bg-emerald-500/30 blur-[150px] rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-purple-500/20 blur-[180px] rounded-full"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black"></div>
+        <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0); background-size: 80px 80px;"></div>
+    </div>
+
+    <div class="min-h-screen px-4 py-10 sm:py-16">
+        <div class="mx-auto max-w-5xl">
+            <!-- Header / Hero -->
+            <header class="text-center space-y-6">
+                <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-white/20 bg-white/5 text-xs sm:text-sm uppercase tracking-[0.2em] text-emerald-200/90">
+                    Sentiment Intelligence
+                </div>
+                <div class="space-y-4">
+                    <p class="text-sm sm:text-base text-white/70">powered by Logistic Regression</p>
+                    <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight">
+                        Analisis Sentimen Ulasan Spotify
+                    </h1>
+                    <p class="text-base sm:text-lg text-white/70 max-w-3xl mx-auto">
+                        Pahami emosi di balik setiap ulasan. Deteksi positif dan negatif hanya dalam hitungan detik dan gunakan insight-nya untuk menyempurnakan pengalaman pengguna Anda.
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-white/60">
+                    <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                        <span class="text-emerald-300 text-lg">●</span> Real-time Prediction
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                        <span class="text-emerald-300 text-lg">▲</span> Confidence Insights
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                        <span class="text-emerald-300 text-lg">⚡</span> UX Focused
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main layout -->
+            <div class="mt-12 grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
+                <!-- Form Card -->
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl shadow-emerald-950/30">
+                    <div class="p-6 sm:p-10 space-y-8">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-2xl bg-emerald-400/20 text-emerald-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6l4 2m6-5a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-white/60 text-sm uppercase tracking-widest">Langkah 1</p>
+                                <h2 class="text-2xl font-semibold">Masukkan Ulasan Spotify</h2>
+                            </div>
+                        </div>
+
+                        <form action="/predict" method="POST" class="space-y-6">
+                            <div>
+                                <label for="ulasan" class="block text-sm font-semibold text-white/80 mb-3">
+                                    Tulis Ulasan Anda
+                                </label>
+                                <textarea
+                                    name="ulasan"
+                                    id="ulasan"
+                                    rows="7"
+                                    class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="Contoh: &quot;I love the curated playlists, but the app freezes when I download songs.&quot;"
+                                >{{ ulasan_asli or '' }}</textarea>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="w-full flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 text-slate-950 font-semibold text-lg py-4 shadow-lg shadow-emerald-500/40 hover:shadow-emerald-400/60 transition-all duration-300"
+                            >
+                                <span>Analisis Sentimen</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </form>
+
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <p class="text-sm text-white/50 mb-1">Akurasi Model</p>
+                                <p class="text-2xl font-semibold text-white">92.7%</p>
+                                <p class="text-xs text-white/40">Dilatih dengan ribuan ulasan</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <p class="text-sm text-white/50 mb-1">Tipe Sentimen</p>
+                                <p class="text-2xl font-semibold text-white">2 Kategori</p>
+                                <p class="text-xs text-white/40">Positif, Negatif</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result / Insights -->
+                <div class="space-y-6">
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/40">
+                        <div class="flex items-start justify-between mb-6">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Langkah 2</p>
+                                <h3 class="text-xl font-semibold text-white mt-1">Hasil Analisis</h3>
+                                <p class="text-sm text-white/60 mt-1">Warna kartu menyesuaikan sentimen</p>
+                            </div>
+                            <div class="px-3 py-1 text-xs rounded-full bg-white/10 text-white/70 border border-white/10">AI Verdict</div>
+                        </div>
+
+                        {% if hasil_prediksi %}
+                            {% if 'Positif' in hasil_prediksi %}
+                                {% set border_color = 'border-emerald-400' %}
+                                {% set bg_color = 'bg-emerald-400/10' %}
+                                {% set text_color = 'text-emerald-200' %}
+                                {% set icon = '✓' %}
+                                {% set sentiment_label = 'Positif' %}
+                            {% elif 'Negatif' in hasil_prediksi %}
+                                {% set border_color = 'border-rose-400' %}
+                                {% set bg_color = 'bg-rose-400/10' %}
+                                {% set text_color = 'text-rose-200' %}
+                                {% set icon = '✗' %}
+                                {% set sentiment_label = 'Negatif' %}
+                            {% elif 'Netral' in hasil_prediksi %}
+                                {% set border_color = 'border-slate-300' %}
+                                {% set bg_color = 'bg-slate-200/10' %}
+                                {% set text_color = 'text-slate-200' %}
+                                {% set icon = '–' %}
+                                {% set sentiment_label = 'Netral' %}
+                            {% else %}
+                                {% set border_color = 'border-amber-400' %}
+                                {% set bg_color = 'bg-amber-300/10' %}
+                                {% set text_color = 'text-amber-200' %}
+                                {% set icon = '!' %}
+                                {% set sentiment_label = 'Info' %}
+                            {% endif %}
+
+                            <div class="p-5 rounded-2xl border-l-4 {{ border_color }} {{ bg_color }} {{ text_color }}">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl">{{ icon }}</div>
+                                    <div>
+                                        <p class="text-sm uppercase tracking-[0.3em]">{{ sentiment_label }}</p>
+                                        <p class="text-xl font-semibold text-white">{{ hasil_prediksi }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <p class="text-xs uppercase tracking-[0.3em] text-white/50 mb-2">Ulasan Anda</p>
+                                <div class="p-5 rounded-2xl bg-white/5 border border-white/5 text-sm text-white/80">
+                                    “{{ ulasan_asli }}”
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="rounded-2xl border border-dashed border-white/20 p-6 text-center text-white/60">
+                                Masukkan ulasan untuk melihat prediksi sentimen yang kaya visual.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-white/3 backdrop-blur-lg border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5">
+                        <p class="text-xs uppercase tracking-[0.3em] text-white/50">Tips UX</p>
+                        <div class="space-y-4 text-sm text-white/70">
+                            <div class="flex gap-3">
+                                <span class="text-emerald-300 text-lg">1.</span>
+                                <p>Gunakan bahasa spesifik agar model dapat menangkap konteks emosional dengan presisi.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <span class="text-emerald-300 text-lg">2.</span>
+                                <p>Sertakan detail masalah atau fitur favorit untuk insight yang dapat ditindaklanjuti.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <span class="text-emerald-300 text-lg">3.</span>
+                                <p>Analisis beberapa ulasan per fitur untuk membangun prioritas perbaikan berbasis data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
